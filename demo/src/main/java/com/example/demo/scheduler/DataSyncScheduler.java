@@ -1,5 +1,6 @@
 package com.example.demo.scheduler;
 
+import com.example.demo.Entity.ScrapDetail;
 import com.example.demo.Service.ScrapdataService;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -17,9 +18,10 @@ import org.springframework.stereotype.Component;
 public class DataSyncScheduler {
 
 
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRate = 5000000)
     public void Scraping(){
         String url = "https://books.toscrape.com/";
+        log.error("started");
         try {
             Document document = Jsoup.connect(url).get();
             //document isthe hole ducument from where i need the data
@@ -31,6 +33,11 @@ public class DataSyncScheduler {
                 String price = book.select(".price_color").text();
 
                 log.error(title + " " + price);
+                ScrapDetail scrapDetail = new ScrapDetail();
+                scrapDetail.setScrapId(i++);
+                scrapDetail.setTitle(title);
+                scrapDetail.setPrice(price);
+                scrapdataService.addScrapData(scrapDetail);
             }
         } catch (Exception e) {
             e.printStackTrace();
